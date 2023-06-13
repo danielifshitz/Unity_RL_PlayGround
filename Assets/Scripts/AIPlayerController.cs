@@ -8,12 +8,12 @@ using Unity.MLAgents.Sensors;
 public class AIPlayerController : Agent
 {
     [SerializeField]
-    private float Speed = 10f;
+    private float Speed = 5f;
     [SerializeField]
     private EnvironmentSetup Environment;
     
+    private JumpController Jump;
     private Rigidbody rb;
-    private int Jump = 0;
     private Vector3 StartingPosition;
     private GameObject Door;
     private float RewardShapping;
@@ -27,6 +27,7 @@ public class AIPlayerController : Agent
     }
     public override void Initialize()
     {
+        Jump = GetComponentsInChildren<JumpController>()[0];
         rb = GetComponent<Rigidbody>();
         StartingPosition = transform.position;
     }
@@ -170,19 +171,18 @@ public class AIPlayerController : Agent
 
         if (actions.ContinuousActions[2] > 0.5)
         {
-            if (Jump == 0)
+            int jump = Jump.Jump();
+            if (jump == 1)
             {
                 // rb.AddForce(new Vector3(0, 25, 0) * Speed);
                 moveY = 25;
             }
 
-            else if (Jump == 1)
+            else if (jump == 2)
             {
                 // rb.AddForce(new Vector3(0, 15, 0) * Speed);
                 moveY = 15;
             }
-
-            Jump++;
         }
 
         // Calculate movement vector
@@ -230,7 +230,7 @@ public class AIPlayerController : Agent
 
     private void FixedUpdate()
     {
-        if (Jump > 0)
+        if (Jump.GetJump() > 0)
             rb.velocity = new Vector3(rb.velocity.x * 0.96f, rb.velocity.y, rb.velocity.z * 0.96f);
     }
 
@@ -242,11 +242,6 @@ public class AIPlayerController : Agent
             AddReward(-5f / RewardShapping);
             Environment.ResetEnvironment();
             EndEpisode();
-        }
-
-        else if (collision.gameObject.CompareTag("Ground") || collision.gameObject.tag == "Obstacle")
-        {
-            Jump = 0;
         }
 
         else if (collision.gameObject.CompareTag("Open door"))
