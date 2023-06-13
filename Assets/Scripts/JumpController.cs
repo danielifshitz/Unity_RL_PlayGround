@@ -14,7 +14,7 @@ public class JumpController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(JumpCounter);
+
     }
 
     public int GetJump()
@@ -35,7 +35,6 @@ public class JumpController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("in OnCollisionEnter");
         if (collision.gameObject.CompareTag("Ground") || collision.gameObject.tag == "Obstacle")
         {
             JumpCounter = 0;
