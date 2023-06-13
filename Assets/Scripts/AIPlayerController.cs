@@ -239,7 +239,7 @@ public class AIPlayerController : Agent
         if (collision.gameObject.CompareTag("Boundary"))
         {
             Debug.Log("Loss (" + Environment.StageDifficulty + ") (" + LineToDoorName + ")");
-            AddReward(-5f / RewardShapping);
+            AddReward(-100f / RewardShapping);
             Environment.ResetEnvironment();
             EndEpisode();
         }
@@ -247,7 +247,7 @@ public class AIPlayerController : Agent
         else if (collision.gameObject.CompareTag("Open door"))
         {
             Debug.Log("Win (" + Environment.StageDifficulty + ") (" + LineToDoorName + ")");
-            AddReward(5f * RewardShapping);
+            AddReward(25f * RewardShapping);
             Environment.ResetEnvironment();
             EndEpisode();
         }
