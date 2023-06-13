@@ -46,6 +46,10 @@ ExportedObj/
 *.mdb
 *.opendb
 *.VC.db
+*.userprefs
+*.dll
+*.exe
+*.sln.DotSettings
 
 # Unity3D generated meta files
 *.pidb.meta
@@ -70,3 +74,40 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+Assets/games_log.csv
+Assets/games_log.csv.meta
+
+# macOS generated files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# JetBrains Rider generated files
+.idea/
+
+# Android generated files
+/Build/
+/Temp/
+.gradle/
+/gradle/
+/build/
+/captures/
+
+# iOS generated files
+/[Bb]uild/[Ii]OS/
+/[Tt]est[Rr]eports/
+/[Tt]est[Rr]esults/
+/[Aa]rtifacts/
+/Unity-iPhone.xcworkspace/
+
+# Unity Package Manager
+/Assets/PackageCache/
+/Assets/PackageManifest.json
+/Assets/PackageManager/
+
+# Unity Cloud Build
+/Assets/Editor/CloudBuildGeneratedAssets/
+
+# Miscellaneous
+/_UpgradeReport_Files/
+/_UpgradeReport_Common/
