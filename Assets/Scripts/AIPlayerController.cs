@@ -19,12 +19,15 @@ public class AIPlayerController : Agent
     private float RewardShapping;
     private Color LineToDoor;
     private string LineToDoorName;
+    private AIScoreController AIScoreController;
+    private bool TrainedGood;
     // Start is called before the first frame update
 
     void Start()
     {
         Door = null;
         StartingPosition = new Vector3(transform.position.x, transform.position.y + 0.1f, transform.position.z);
+        AIScoreController = AIScoreController.Instance;
     }
     public override void Initialize()
     {
@@ -40,7 +43,8 @@ public class AIPlayerController : Agent
         float number = Random.Range(0f, 1f);
         Door = FindDoor();
         RewardShapping = Environment.StageDifficulty;
-        if (number >= 0.3f)
+        TrainedGood = AIScoreController.GetStageWins(RewardShapping) > 100;
+        if (TrainedGood || number >= 0.3f)
         {
             transform.position = StartingPosition;
             LineToDoor = Color.red;
@@ -194,7 +198,14 @@ public class AIPlayerController : Agent
         // Add force in the direction of the move vector
         rb.AddForce(moveXZ * Speed);
 
-        AddReward(-0.015f);
+        float IncreaseNegativeReward = 1;
+
+        if (TrainedGood)
+        {
+            IncreaseNegativeReward = Mathf.Log10(AIScoreController.GetStageWins(RewardShapping));
+        }
+
+        AddReward(-0.015f * IncreaseNegativeReward);
     }
 
     /// <summary>
@@ -251,6 +262,7 @@ public class AIPlayerController : Agent
         {
             Debug.Log("Win (" + Environment.StageDifficulty + ") (" + LineToDoorName + ")");
             AddReward(25f * RewardShapping);
+            AIScoreController.IncrementScore(RewardShapping);
             Environment.ResetEnvironment();
             EndEpisode();
         }
