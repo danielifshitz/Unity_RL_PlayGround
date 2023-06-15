@@ -8,7 +8,7 @@ using Unity.MLAgents.Sensors;
 public class AIPlayerController : Agent
 {
     [SerializeField]
-    private float Speed = 5f;
+    private float Speed = 8f;
     [SerializeField]
     private EnvironmentSetup Environment;
     
@@ -24,12 +24,12 @@ public class AIPlayerController : Agent
     void Start()
     {
         Door = null;
+        StartingPosition = new Vector3(transform.position.x, transform.position.y + 0.1f, transform.position.z);
     }
     public override void Initialize()
     {
         Jump = GetComponentsInChildren<JumpController>()[0];
         rb = GetComponent<Rigidbody>();
-        StartingPosition = transform.position;
     }
 
     public override void OnEpisodeBegin()
@@ -82,14 +82,17 @@ public class AIPlayerController : Agent
             // Generate random position
             float x = Random.Range(Environment.L + capsuleRadius, Environment.R - capsuleRadius);
             float z = Random.Range(Environment.D + capsuleRadius, Environment.U - capsuleRadius);
-            Vector3 randomPosition = new Vector3(x, StartingPosition.y, z);
-
-            // Check if the position is empty
-            if (IsPositionEmpty(randomPosition, capsuleRadius))
+            for (float y = StartingPosition.y; y < 5 + StartingPosition.y; y++)
             {
-                // Instantiate the object at the empty position
-                transform.position = randomPosition;
-                return; // Exit the loop since an object was successfully instantiated
+                Vector3 randomPosition = new Vector3(x, y, z);
+
+                // Check if the position is empty
+                if (IsPositionEmpty(randomPosition, capsuleRadius))
+                {
+                    // Instantiate the object at the empty position
+                    transform.position = randomPosition;
+                    return; // Exit the loop since an object was successfully instantiated
+                }
             }
         }
 
