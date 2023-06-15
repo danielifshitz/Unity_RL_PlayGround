@@ -178,13 +178,13 @@ public class AIPlayerController : Agent
             if (jump == 1)
             {
                 // rb.AddForce(new Vector3(0, 25, 0) * Speed);
-                moveY = 25;
+                moveY = 20;
             }
 
             else if (jump == 2)
             {
                 // rb.AddForce(new Vector3(0, 15, 0) * Speed);
-                moveY = 15;
+                moveY = 10;
             }
         }
 
