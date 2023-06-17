@@ -36,7 +36,9 @@ public class EnvironmentSetup : MonoBehaviour
     [SerializeField]
     private List<DoorType> DoorsType;
     [SerializeField]
-    private List<GameObject> ObstacleStrocture;
+    private List<GameObject> EasyObstacleStrocture;
+    [SerializeField]
+    private List<GameObject> HardObstacleStrocture;
 
     [HideInInspector]
     public float R = 0;
@@ -48,11 +50,23 @@ public class EnvironmentSetup : MonoBehaviour
     public float D = 0;
     [HideInInspector]
     public List<GameObject> Doors = new List<GameObject>();
+    [HideInInspector]
+    public AIScoreController AIScoreController;
+    [HideInInspector]
+    public Difficulty StroctureDifficulty = Difficulty.easy;
+
+    public enum Difficulty
+    {
+        easy,
+        hard,
+        nightmare
+    }
 
     private List<GameObject> LeftWallBricks = new List<GameObject>();
     private List<GameObject> RightWallBricks = new List<GameObject>();
     private List<GameObject> BackWallBricks = new List<GameObject>();
     private List<GameObject> UpperWallBricks = new List<GameObject>();
+
 
     public enum DoorType
     {
@@ -75,6 +89,14 @@ public class EnvironmentSetup : MonoBehaviour
         ChooseStrocture();
     }
 
+    private void Start()
+    {
+        AIScoreController = AIScoreController.Instance;
+        if (AIScoreController.GetStageWins(StageDifficulty) > 100) {
+            StroctureDifficulty = Difficulty.hard;
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -83,19 +105,38 @@ public class EnvironmentSetup : MonoBehaviour
 
     private void ChooseStrocture()
     {
-        if (ObstacleStrocture.Count > 0)
+        List<GameObject> ObstacleStrocture;
+        if (EasyObstacleStrocture.Count > 0 && HardObstacleStrocture.Count > 0)
         {
-            int stroctureIndex = Random.Range(0, ObstacleStrocture.Count);
-            for (int i = 0; i < ObstacleStrocture.Count; i++)
+            if (StroctureDifficulty == Difficulty.easy)
             {
-                if (i == stroctureIndex)
-                {
-                    ObstacleStrocture[i].SetActive(true);
-                }
-                else
-                {
-                    ObstacleStrocture[i].SetActive(false);
-                }
+                ObstacleStrocture = EasyObstacleStrocture;
+            }
+            else if (StroctureDifficulty == Difficulty.hard)
+            {
+                ObstacleStrocture = HardObstacleStrocture;
+            }
+            else
+            {
+                // TODO
+                ObstacleStrocture = new List<GameObject>();
+            }
+        }
+        else
+        {
+            ObstacleStrocture = EasyObstacleStrocture.Count > 0 ? EasyObstacleStrocture : HardObstacleStrocture;
+        }
+
+        int stroctureIndex = Random.Range(0, ObstacleStrocture.Count);
+        for (int i = 0; i < ObstacleStrocture.Count; i++)
+        {
+            if (i == stroctureIndex)
+            {
+                ObstacleStrocture[i].SetActive(true);
+            }
+            else
+            {
+                ObstacleStrocture[i].SetActive(false);
             }
         }
     }

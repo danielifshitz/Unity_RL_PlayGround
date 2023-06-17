@@ -19,8 +19,7 @@ public class AIPlayerController : Agent
     private float RewardShapping;
     private Color LineToDoor;
     private string LineToDoorName;
-    private AIScoreController AIScoreController;
-    private bool TrainedGood;
+    
     private float IncreaseNegativeReward;
     // Start is called before the first frame update
 
@@ -28,7 +27,6 @@ public class AIPlayerController : Agent
     {
         Door = null;
         StartingPosition = new Vector3(transform.position.x, transform.position.y + 0.1f, transform.position.z);
-        AIScoreController = AIScoreController.Instance;
         IncreaseNegativeReward = 1;
     }
     public override void Initialize()
@@ -45,17 +43,17 @@ public class AIPlayerController : Agent
         float number = Random.Range(0f, 1f);
         Door = FindDoor();
         RewardShapping = Environment.StageDifficulty;
-        TrainedGood = AIScoreController.GetStageWins(RewardShapping) > 100;
+        
         float z = StartingPosition.z;
-        if (TrainedGood)
+        if (Environment.StroctureDifficulty == EnvironmentSetup.Difficulty.hard)
         {
-            IncreaseNegativeReward = Mathf.Log10(AIScoreController.GetStageWins(RewardShapping));
+            IncreaseNegativeReward = Mathf.Log10(Environment.AIScoreController.GetStageWins(RewardShapping));
             Vector3 capsuleScale = transform.localScale;
             float capsuleRadius = Mathf.Max(capsuleScale.x, capsuleScale.z) * 0.5f;
             z = Random.Range(Environment.D + capsuleRadius, Environment.U - capsuleRadius);
         }
 
-        if (TrainedGood || number >= 0.3f)
+        if (Environment.StroctureDifficulty == EnvironmentSetup.Difficulty.hard || number >= 0.3f)
         {
             transform.position = new Vector3(StartingPosition.x, StartingPosition.y, z); ;
             LineToDoor = Color.red;
@@ -265,7 +263,7 @@ public class AIPlayerController : Agent
             AddReward(25f * RewardShapping);
             if (LineToDoorName == "red")
             {
-                AIScoreController.IncrementScore(RewardShapping);
+                Environment.AIScoreController.IncrementScore(RewardShapping);
             }
 
             Environment.ResetEnvironment();

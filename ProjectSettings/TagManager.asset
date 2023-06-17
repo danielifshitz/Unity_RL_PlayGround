@@ -11,6 +11,7 @@ TagManager:
   - Open door
   - Close door
   - DontStandOnIt
+  - Dont Start
   layers:
   - Default
   - TransparentFX
