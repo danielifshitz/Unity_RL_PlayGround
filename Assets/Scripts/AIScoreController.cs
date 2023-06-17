@@ -26,6 +26,8 @@ public class AIScoreController : MonoBehaviour
         {
             // Set the instance
             instance = this;
+
+            StageWins = new Dictionary<float, int>();
             // Make the Score Manager persistent across scenes
             DontDestroyOnLoad(gameObject);
         }
@@ -41,6 +43,11 @@ public class AIScoreController : MonoBehaviour
         else
         {
             StageWins.Add(StageDifficulty, 0);
+        }
+
+        if (StageWins[StageDifficulty] % 100 == 0)
+        {
+            Debug.Log("StageWins[" + StageDifficulty + "] = " + StageWins[StageDifficulty]);
         }
     }
 

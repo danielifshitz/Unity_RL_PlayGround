@@ -10,6 +10,7 @@ TagManager:
   - Boundary
   - Open door
   - Close door
+  - DontStandOnIt
   layers:
   - Default
   - TransparentFX

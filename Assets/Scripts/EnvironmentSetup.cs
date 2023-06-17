@@ -35,6 +35,8 @@ public class EnvironmentSetup : MonoBehaviour
     private GameObject Boundary;
     [SerializeField]
     private List<DoorType> DoorsType;
+    [SerializeField]
+    private List<GameObject> ObstacleStrocture;
 
     [HideInInspector]
     public float R = 0;
@@ -67,9 +69,10 @@ public class EnvironmentSetup : MonoBehaviour
                 r.enabled = !IsTraining;
 
         CallculateCorners();
-        DoorsLocation();
+        SetDoorsTypeOnTraining();
         BuildStructure();
         AddBoundary();
+        ChooseStrocture();
     }
 
     // Update is called once per frame
@@ -78,7 +81,26 @@ public class EnvironmentSetup : MonoBehaviour
         
     }
 
-    private void DoorsLocation()
+    private void ChooseStrocture()
+    {
+        if (ObstacleStrocture.Count > 0)
+        {
+            int stroctureIndex = Random.Range(0, ObstacleStrocture.Count);
+            for (int i = 0; i < ObstacleStrocture.Count; i++)
+            {
+                if (i == stroctureIndex)
+                {
+                    ObstacleStrocture[i].SetActive(true);
+                }
+                else
+                {
+                    ObstacleStrocture[i].SetActive(false);
+                }
+            }
+        }
+    }
+
+    private void SetDoorsTypeOnTraining()
     {
         if (!IsTraining)
         {
@@ -397,6 +419,8 @@ public class EnvironmentSetup : MonoBehaviour
             Destroy(door);
         }
 
+        SetDoorsTypeOnTraining();
         CreateRightWall();
+        ChooseStrocture();
     }
 }

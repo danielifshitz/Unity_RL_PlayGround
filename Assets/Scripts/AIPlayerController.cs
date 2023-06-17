@@ -21,6 +21,7 @@ public class AIPlayerController : Agent
     private string LineToDoorName;
     private AIScoreController AIScoreController;
     private bool TrainedGood;
+    private float IncreaseNegativeReward;
     // Start is called before the first frame update
 
     void Start()
@@ -28,6 +29,7 @@ public class AIPlayerController : Agent
         Door = null;
         StartingPosition = new Vector3(transform.position.x, transform.position.y + 0.1f, transform.position.z);
         AIScoreController = AIScoreController.Instance;
+        IncreaseNegativeReward = 1;
     }
     public override void Initialize()
     {
@@ -44,24 +46,30 @@ public class AIPlayerController : Agent
         Door = FindDoor();
         RewardShapping = Environment.StageDifficulty;
         TrainedGood = AIScoreController.GetStageWins(RewardShapping) > 100;
+        float z = StartingPosition.z;
+        if (TrainedGood)
+        {
+            IncreaseNegativeReward = Mathf.Log10(AIScoreController.GetStageWins(RewardShapping));
+            Vector3 capsuleScale = transform.localScale;
+            float capsuleRadius = Mathf.Max(capsuleScale.x, capsuleScale.z) * 0.5f;
+            z = Random.Range(Environment.D + capsuleRadius, Environment.U - capsuleRadius);
+        }
+
         if (TrainedGood || number >= 0.3f)
         {
-            transform.position = StartingPosition;
+            transform.position = new Vector3(StartingPosition.x, StartingPosition.y, z); ;
             LineToDoor = Color.red;
             LineToDoorName = "red";
         }
         else if (number >= 0.1f)
         {
-            //float x = Random.Range(Environment.L + 1, Environment.R - 1);
-            //float z = Random.Range(Environment.D + 1, Environment.U - 1);
-            //transform.position = new Vector3(x, StartingPosition.y, z);
             MovePlayerToEmptyLocation();
             LineToDoor = Color.blue;
             LineToDoorName = "blue";
         }
         else if(number >= 0.03f)
         {
-            transform.position = new Vector3(Door.transform.position.x - 1, StartingPosition.y, StartingPosition.z);
+            transform.position = new Vector3(Door.transform.position.x - 1, StartingPosition.y, z);
             RewardShapping = 1;
             LineToDoor = Color.yellow;
             LineToDoorName = "yellow";
@@ -198,13 +206,6 @@ public class AIPlayerController : Agent
         // Add force in the direction of the move vector
         rb.AddForce(moveXZ * Speed);
 
-        float IncreaseNegativeReward = 1;
-
-        if (TrainedGood)
-        {
-            IncreaseNegativeReward = Mathf.Log10(AIScoreController.GetStageWins(RewardShapping));
-        }
-
         AddReward(-0.015f * IncreaseNegativeReward);
     }
 
@@ -245,7 +246,7 @@ public class AIPlayerController : Agent
     private void FixedUpdate()
     {
         if (Jump.GetJump() > 0)
-            rb.velocity = new Vector3(rb.velocity.x * 0.96f, rb.velocity.y, rb.velocity.z * 0.96f);
+            rb.velocity = new Vector3(rb.velocity.x * 0.95f, rb.velocity.y, rb.velocity.z * 0.95f);
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -262,9 +263,18 @@ public class AIPlayerController : Agent
         {
             Debug.Log("Win (" + Environment.StageDifficulty + ") (" + LineToDoorName + ")");
             AddReward(25f * RewardShapping);
-            AIScoreController.IncrementScore(RewardShapping);
+            if (LineToDoorName == "red")
+            {
+                AIScoreController.IncrementScore(RewardShapping);
+            }
+
             Environment.ResetEnvironment();
             EndEpisode();
+        }
+
+        else if (collision.gameObject.CompareTag("DontStandOnIt"))
+        {
+            AddReward(-0.05f * IncreaseNegativeReward);
         }
     }
 
