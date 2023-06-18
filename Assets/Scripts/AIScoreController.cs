@@ -45,7 +45,7 @@ public class AIScoreController : MonoBehaviour
             StageWins.Add(StageDifficulty, 0);
         }
 
-        if (StageWins[StageDifficulty] % 100 == 0)
+        if (StageWins[StageDifficulty] == 1000)
         {
             Debug.Log("StageWins[" + StageDifficulty + "] = " + StageWins[StageDifficulty]);
         }

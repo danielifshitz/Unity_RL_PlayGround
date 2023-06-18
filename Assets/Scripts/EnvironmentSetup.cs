@@ -66,6 +66,7 @@ public class EnvironmentSetup : MonoBehaviour
     private List<GameObject> RightWallBricks = new List<GameObject>();
     private List<GameObject> BackWallBricks = new List<GameObject>();
     private List<GameObject> UpperWallBricks = new List<GameObject>();
+    private GameObject CurrentObstacle = null;
 
 
     public enum DoorType
@@ -92,9 +93,6 @@ public class EnvironmentSetup : MonoBehaviour
     private void Start()
     {
         AIScoreController = AIScoreController.Instance;
-        if (AIScoreController.GetStageWins(StageDifficulty) > 100) {
-            StroctureDifficulty = Difficulty.hard;
-        }
     }
 
     // Update is called once per frame
@@ -105,6 +103,11 @@ public class EnvironmentSetup : MonoBehaviour
 
     private void ChooseStrocture()
     {
+        if (CurrentObstacle != null)
+        {
+            CurrentObstacle.SetActive(false);
+        }
+
         List<GameObject> ObstacleStrocture;
         if (EasyObstacleStrocture.Count > 0 && HardObstacleStrocture.Count > 0)
         {
@@ -133,6 +136,7 @@ public class EnvironmentSetup : MonoBehaviour
             if (i == stroctureIndex)
             {
                 ObstacleStrocture[i].SetActive(true);
+                CurrentObstacle = ObstacleStrocture[i];
             }
             else
             {
@@ -444,6 +448,11 @@ public class EnvironmentSetup : MonoBehaviour
 
     public void ResetEnvironment()
     {
+        if (AIScoreController.GetStageWins(StageDifficulty) > 100)
+        {
+            StroctureDifficulty = Difficulty.hard;
+        }
+
         // Debug.Log("IN ResetEnvironment");
         int LeftWallLength = RightWallBricks.Count;
         for (int i = LeftWallLength - 1; i >= 0;  i--)
